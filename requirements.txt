@@ -1,0 +1,9 @@
+# install pytorch, torchvision manually
+transformers
+datasets
+captum
+sklearn
+numpy
+jsonnet
+overrides
+pytorch-ignite
