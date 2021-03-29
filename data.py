@@ -69,7 +69,8 @@ def get_dataset(name: str, config: Dict):
             paths_json_files = read_path(paths_json_files)
 
         dataset = load_dataset('json', data_files=paths_json_files)
-        dataset = dataset['train']  # todo: why is this necessary, why is a Dict returned?
+        # the json lines are loaded into a dictionary; the default key is 'train'
+        dataset = dataset['train']  # note: this does not retrieve the actual train split (if the json lines are not part of the train split)
         features = dataset.features.copy()
         # type handling
         features['input_ids'].feature = Value(dtype='int64')
