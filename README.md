@@ -1,5 +1,5 @@
 # Empirical Explainers 
-This repo contains the refactored code and pointers to the data accompanying our paper "Efficient Explanations from Empirical Explainers". 
+This repo contains the refactored code and pointers to the data accompanying our paper ["Efficient Explanations from Empirical Explainers"](https://arxiv.org/abs/2103.15429). 
 
 Below, please find (1) pointers to the heatmaps promised in the paper, (2) instructions on how to replicate our experiments and (3) all our data, models and logs. 
 
