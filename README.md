@@ -8,8 +8,8 @@ Disclaimer: This refactored and prettified version of the code has not been test
 ##  :floppy_disk: Download the Explanations 
 Here are the attribution maps by the expensive target explainers and the Empirical Explainers. Each line contains an HTML document. 
 Your browser probably will not be able to load all data at once. You can extract individual lines into separate files to solve that issue. 
-* [BERT / IMDB / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/gZbHQo5Eb5kdMip) (37 MB)
-* [XLNet / SNLI / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/yzo7s3zCFzYz6Dt) (823 MB)
+* [BERT / IMDB / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/gZbHQo5Eb5kdMip) (823 MB)
+* [XLNet / SNLI / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/yzo7s3zCFzYz6Dt) (37 MB)
 
 
 
