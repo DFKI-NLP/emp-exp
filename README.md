@@ -3,7 +3,7 @@ This repo contains the refactored code and pointers to the data accompanying our
 
 Below, please find (1) pointers to the heatmaps promised in the paper, (2) instructions on how to replicate our experiments and (3) all our data, models and logs. 
 
-Disclaimer: This refactored and prettified version of the code has not been tested yet. This disclaimer will be removed when the tests have been conducted.
+Disclaimer: This is a refactored and prettified version of the code and has not been tested exhaustively yet. This disclaimer will be removed when the tests have been conducted.
 
 ##  :floppy_disk: Download the Explanations 
 Here are the attribution maps by the expensive target explainers and the Empirical Explainers. Each line contains an HTML document. 
