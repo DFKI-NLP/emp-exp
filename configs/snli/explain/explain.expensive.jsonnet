@@ -1,4 +1,4 @@
-local base_directory = "$HOME/experiments/gxai/2021-02-26-experiment-snli";
+local base_directory = "/netscratch/feldhus/experiments/emp-exp/snli";
 
 local name_model = 'xlnet-base-cased';
 local name_file_model = "2021-02-26-15-37-03.xlnet-base-cased.huggingface.snli_model_f1=0.9124.pt";

@@ -1,3 +1,4 @@
+torch
 # install pytorch, torchvision manually
 transformers
 datasets

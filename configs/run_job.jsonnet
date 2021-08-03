@@ -1,17 +1,17 @@
 {
     "download": false,
-    "path_config_download": "./configs/imdb/download/download.imdb.test.jsonnet",
+    "path_config_download": "./configs/paws/download/download.paws.validation.jsonnet",
 
     "train": false,
-    "path_config_training": "./configs/snli/train/train.empirical-explainer.jsonnet",
+    "path_config_training": "./configs/paws/train/train.downstream.jsonnet",
 
-    "explain": false,
-    "path_config_explain": "./configs/snli/explain/explain.empirical.jsonnet",
+    "explain": true,
+    "path_config_explain": "./configs/ag_news/explain/explain.expensive.jsonnet",
 
     "evaluate": false,
-    "path_config_evaluate": "./configs/snli/evaluate/evaluate.jsonnet",
+    "path_config_evaluate": "./configs/imdb/evaluate/evaluate.jsonnet",
 
-    "visualize": true,
-    "path_config_visualize": "./configs/snli/visualize/visualize.jsonnet",
+    "visualize": false,
+    "path_config_visualize": "./configs/imdb/visualize/visualize.jsonnet",
 }
 

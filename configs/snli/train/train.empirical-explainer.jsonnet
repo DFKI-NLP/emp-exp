@@ -1,4 +1,4 @@
-local path_base_dir = "$HOME/experiments/gxai/2021-02-26-experiment-snli";
+local path_base_dir = "/netscratch/feldhus/experiments/emp-exp/snli";
 
 # model
 local name_model = "xlnet-base-cased";

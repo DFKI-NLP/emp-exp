@@ -1,5 +1,5 @@
 # base directory w/o trailing backslash
-local base_directory = "$HOME/experiments/gxai/2021-02-26-experiment-snli";
+local base_directory = "/netscratch/feldhus/experiments/emp-exp/snli";
 
 # dataset
 local name_dataset = 'huggingface.snli';

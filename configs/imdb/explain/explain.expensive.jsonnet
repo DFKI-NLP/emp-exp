@@ -1,5 +1,5 @@
 # base directory w/o trailing backslash
-local base_directory = "$HOME/experiments/gxai/2021-03-08-experiment-imdb";
+local base_directory = "/netscratch/feldhus/experiments/emp-exp/imdb";
 
 # name of the encoder used in the downstream model, other option xlnet-base-cased
 local name_model = 'bert-base-cased';

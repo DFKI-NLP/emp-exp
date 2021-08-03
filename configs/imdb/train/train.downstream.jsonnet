@@ -15,11 +15,11 @@ local patience = 2;
 // the maximum number of epochs after which to terminate training
 local max_epochs = 100;
 // the directory to where to save the model parameters
-local path_dir_model = '$HOME/experiments/gxai/2021-02-26-experiment-imdb/models/';
+local path_dir_model = '/netscratch/feldhus/experiments/emp-exp/imdb/models/';
 // the directory from where to load the training data
-local path_dataset_train = "$HOME/experiments/gxai/2021-02-26-experiment-imdb/data/train/";
+local path_dataset_train = "/netscratch/feldhus/experiments/emp-exp/imdb/data/train/";
 // the directory from where to load the validation data
-local path_dataset_validation = "$HOME/experiments/gxai/2021-02-26-experiment-imdb/data/validation/";
+local path_dataset_validation = "/netscratch/feldhus/experiments/emp-exp/imdb/data/validation/";
 // the interval at which to log information, such as loss
 local logging_training_loss_every = 10;
 

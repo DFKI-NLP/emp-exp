@@ -1,5 +1,5 @@
 # the base directory
-local path_base_dir = "$HOME/experiments/gxai/2021-03-08-experiment-imdb";
+local path_base_dir = "/netscratch/feldhus/experiments/emp-exp/imdb";
 
 # model
 # name of the downstream model's encoder, options bert-base-cased, xlnet-base-cased

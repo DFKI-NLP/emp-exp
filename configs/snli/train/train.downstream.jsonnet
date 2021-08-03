@@ -7,9 +7,9 @@ local batch_size_train = 16;
 local batch_size_eval = 32;
 local patience = 2;
 local max_epochs = 100;
-local path_dir_model = '$HOME/experiments/gxai/2021-02-26-experiment-snli/models/';
-local path_dataset_train = "$HOME/experiments/gxai/2021-02-26-experiment-snli/data/train/";
-local path_dataset_validation = "$HOME/experiments/gxai/2021-02-26-experiment-snli/data/validation/";
+local path_dir_model = '/netscratch/feldhus/experiments/emp-exp/snli/models/';
+local path_dataset_train = "/netscratch/feldhus/experiments/emp-exp/snli/data/train/";
+local path_dataset_validation = "/netscratch/feldhus/experiments/emp-exp/snli/data/validation/";
 local logging_training_loss_every = 10;
 
 local dataset_huggingface_train = {

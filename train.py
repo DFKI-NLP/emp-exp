@@ -9,14 +9,16 @@ from ignite.handlers import EarlyStopping, ModelCheckpoint
 from overrides import overrides
 from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
-from transformers import AutoModelForSequenceClassification, AutoModel, BertForSequenceClassification, \
-    AutoTokenizer, XLNetForSequenceClassification
+from transformers import AutoModel, AutoModelForSequenceClassification, AutoTokenizer
 
 from data import get_dataset
 from utils_and_base_types import read_config, read_path, get_logger, get_time, Configurable
 from ignite.metrics import Metric, MeanSquaredError
 from ignite.metrics.metric import sync_all_reduce, reinit__is_reduced
 import numpy as np
+
+
+AVAILABLE_MODELS = ['bert-base-cased', 'google/electra-small-discriminator', 'roberta-base', 'xlnet-base-cased']
 
 
 # metrics
@@ -83,15 +85,11 @@ class EmpiricalExplainer(torch.nn.Module, Configurable):
         self.pad_token_id = None
         self.attend_on_pad_tokens = None
 
-    def get_encoder(self, model):
+    @staticmethod
+    def get_encoder(model):
         """Retrieves the encoder from a downstream model. Please note that this is highly dependant on the internals of
         the downstream model. We implemented this using transformers package version 4.1.1.s"""
-        if isinstance(model, BertForSequenceClassification):
-            return model.bert
-        if isinstance(model, XLNetForSequenceClassification):
-            return model.transformer  # todo is this right?
-        else:
-            raise NotImplementedError
+        return model.base_model
 
     @overrides
     def validate_config(self, config: Dict) -> bool:
@@ -143,7 +141,7 @@ class EmpiricalExplainer(torch.nn.Module, Configurable):
 
 def get_model(name_model: str, config: Dict = None):
     """Get a model, specified by name."""
-    if name_model == 'bert-base-cased' or name_model == 'xlnet-base-cased':
+    if name_model in AVAILABLE_MODELS:
         model = AutoModelForSequenceClassification.from_pretrained(name_model, num_labels=config[
             'num_labels'])  # todo num_labels was fixed w/o testing train.py
         return model
@@ -156,7 +154,7 @@ def get_model(name_model: str, config: Dict = None):
 def get_metric(name_model: str):
     """Get the appropriate metrics to evaluate the model on, specified by model name.
     Returns the metric and its name."""
-    if name_model == 'bert-base-cased' or name_model == 'xlnet-base-cased':
+    if name_model in AVAILABLE_MODELS:
         return F1(), 'f1'
     if name_model == 'empirical-explainer':
         return NegativeMSE(), 'nmse'
@@ -194,10 +192,8 @@ def run_train(config: Dict, logger=None):
             optimizer.step()
             return loss.item()
 
-        if name_model == 'bert-base-cased':
+        if name_model in AVAILABLE_MODELS:
             return train_step_downstream_transformer
-        if name_model == 'xlnet-base-cased':
-            return train_step_downstream_transformer  # not a bug, the inputs are the same
         elif name_model == 'empirical-explainer':
             return train_step_empirical_explainer
         else:
@@ -217,14 +213,13 @@ def run_train(config: Dict, logger=None):
         def validation_step_empirical_explainer(engine, batch):
             model.eval()
             with torch.no_grad():
-                inputs = {'input_ids': batch['input_ids'].to(device)} # {k: v.to(device) for k, v in batch.items() if k != 'attribution'}
+                inputs = {'input_ids': batch['input_ids'].to(device)}
+                # {k: v.to(device) for k, v in batch.items() if k != 'attribution'}
                 y = batch['attributions'].to(device)
                 y_pred = model(inputs)
                 return y_pred, y
 
-        if name_model == 'bert-base-cased':
-            return validation_step_downstream_bert
-        if name_model == 'xlnet-base-cased':
+        if name_model in AVAILABLE_MODELS:
             return validation_step_downstream_bert  # same input keys as for bert
         elif name_model == 'empirical-explainer':
             return validation_step_empirical_explainer
@@ -239,7 +234,8 @@ def run_train(config: Dict, logger=None):
     name_dataset = config['dataset_train']['name']
     _now = get_time()
     path_dir_model = read_path(config['path_dir_model'])
-    prefix_model = f'{_now}.{name_model}.{name_dataset}'
+    name_model_string = name_model.replace('/', '-')
+    prefix_model = f'{_now}.{name_model_string}.{name_dataset}'.replace('/', '-')
     logging_training_loss_every = config['logging_training_loss_every']
     max_epochs = config['max_epochs']
     patience = config['patience']

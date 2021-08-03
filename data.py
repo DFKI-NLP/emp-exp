@@ -9,7 +9,10 @@ from utils_and_base_types import read_path
 
 def run_download(config: Dict, logger):
     logger.info(f'(Progress) Download invoked with config \n{json.dumps(config, indent=2)}')
-    dataset = load_dataset(config['name'], split=config['split'])
+    if config['name'] == 'paws':
+        dataset = load_dataset(config['name'], "labeled_final", split=config['split'])
+    else:
+        dataset = load_dataset(config['name'], split=config['split'])
     dataset.save_to_disk(dataset_path=read_path(config['path_out']))
     logger.info(f'(Progress) Terminated normally')
 
@@ -17,7 +20,7 @@ def run_download(config: Dict, logger):
 def get_dataset(name: str, config: Dict):
     """Returns a pytorch dataset."""
 
-    if name == 'huggingface.imdb' or name == 'huggingface.snli':
+    if name.startswith('huggingface'):
         tokenizer = AutoTokenizer.from_pretrained(config['name_model'])
         dataset = load_from_disk(read_path(config['path_dataset']))
 
@@ -39,17 +42,27 @@ def get_dataset(name: str, config: Dict):
                              max_length=config['max_length'],
                              return_special_tokens_mask=True)
 
-        def encode_imdb(instances):
+        def encode_paws(instances):
+            return tokenizer(instances['sentence1'],
+                             instances['sentence2'],
+                             truncation=True,
+                             padding='max_length',
+                             max_length=config['max_length'],
+                             return_special_tokens_mask=True)
+
+        def encode_text(instances):
             return tokenizer(instances['text'],
                              truncation=True,
                              padding='max_length',
                              max_length=config['max_length'],
                              return_special_tokens_mask=True)
 
-        if name == 'huggingface.imdb':
-            dataset = dataset.map(encode_imdb, batched=True, batch_size=config['batch_size'])
+        if name in ['huggingface.imdb', 'huggingface.ag_news']:
+            dataset = dataset.map(encode_text, batched=True, batch_size=config['batch_size'])
         elif name == 'huggingface.snli':
             dataset = dataset.map(encode_snli, batched=True, batch_size=config['batch_size'])
+        elif name == 'huggingface.paws':
+            dataset = dataset.map(encode_paws, batched=True, batch_size=config['batch_size'])
         dataset = dataset.map(lambda examples: {'labels': examples['label']}, batched=True,
                               batch_size=config['batch_size'])
         if name == 'huggingface.snli':
@@ -70,7 +83,9 @@ def get_dataset(name: str, config: Dict):
 
         dataset = load_dataset('json', data_files=paths_json_files)
         # the json lines are loaded into a dictionary; the default key is 'train'
-        dataset = dataset['train']  # note: this does not retrieve the actual train split (if the json lines are not part of the train split)
+        # note: this does not retrieve the actual train split (if the json lines are not part of the train split)
+        dataset = dataset['train']
+
         features = dataset.features.copy()
         # type handling
         features['input_ids'].feature = Value(dtype='int64')

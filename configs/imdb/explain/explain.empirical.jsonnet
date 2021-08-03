@@ -1,5 +1,5 @@
 # the base directory
-local base_directory = "$HOME/experiments/gxai/2021-03-08-experiment-imdb";
+local base_directory = "/netscratch/feldhus/experiments/emp-exp/imdb";
 
 # dataset
 # which dataset to explain

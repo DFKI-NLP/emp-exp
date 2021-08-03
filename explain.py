@@ -1,17 +1,22 @@
 import json
 import os
-from typing import Dict, Callable
-
+import re
 import torch
+import transformers.models as tlm
 from captum.attr import LayerIntegratedGradients, ShapleyValueSampling
 from ignite.handlers import ModelCheckpoint
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import AutoModelForSequenceClassification, BertForSequenceClassification, AutoTokenizer, \
-    XLNetForSequenceClassification
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    BertForSequenceClassification,
+    XLNetForSequenceClassification,
+)
+from typing import Dict, Callable
 
 from train import get_dataset, EmpiricalExplainer
-from utils_and_base_types import read_path, Configurable
+from utils_and_base_types import read_config, read_path, Configurable
 
 
 class Explainer(Configurable):
@@ -30,27 +35,31 @@ class Explainer(Configurable):
 
 
 class ExplainerCaptum(Explainer):
-    available_models = ['bert-base-cased', 'xlnet-base-cased']
+    available_models = ['bert-base-cased', 'google/electra-small-discriminator', 'roberta-base', 'xlnet-base-cased']
 
     def __init__(self):
         super().__init__()
 
     @staticmethod
-    def get_inputs_and_additional_args(name_model: str, batch):
-        assert name_model in ExplainerCaptum.available_models, f'Unkown model:  {name_model}'
-        if name_model == 'bert-base-cased' or name_model == 'xlnet-base-cased':
-            assert 'input_ids' in batch, f'Input ids expected for {name_model} but not found.'
-            assert 'attention_mask' in batch, f'Attention mask expected for {name_model} but not found.'
-            assert 'token_type_ids' in batch, f'Token type ids expected for model {name_model} but not found.'
-            input_ids = batch['input_ids']
+    def get_inputs_and_additional_args(base_model, batch):
+        assert 'input_ids' in batch, f'Input ids expected for {base_model} but not found.'
+        assert 'attention_mask' in batch, f'Attention mask expected for {base_model} but not found.'
+        if base_model in [tlm.bert.BertModel,
+                          tlm.electra.ElectraModel,
+                          tlm.xlnet.XLNetModel]:
+            assert 'token_type_ids' in batch, f'Token type ids expected for model {base_model} but not found.'
             additional_forward_args = (batch['attention_mask'], batch['token_type_ids'])
-            return input_ids, additional_forward_args
+        elif base_model in [tlm.roberta.RobertaModel]:
+            additional_forward_args = (batch['attention_mask'],)
         else:
-            raise NotImplementedError
+            raise NotImplementedError(f'Unknown model: {base_model}')
+        input_ids = batch['input_ids']
+
+        return input_ids, additional_forward_args
 
     @staticmethod
     def get_forward_func(name_model: str, model):
-        assert name_model in ExplainerCaptum.available_models, f'Unkown model:  {name_model}'
+        assert name_model in ExplainerCaptum.available_models, f'Unknown model:  {name_model}'
 
         def bert_forward(input_ids, attention_mask, token_type_ids):
             input_model = {
@@ -61,8 +70,20 @@ class ExplainerCaptum(Explainer):
             output_model = model(**input_model)[0]
             return output_model
 
-        if name_model == 'bert-base-cased' or name_model == 'xlnet-base-cased':
+        def roberta_forward(input_ids, attention_mask):
+            input_model = {
+                'input_ids': input_ids.long(),
+                'attention_mask': attention_mask.long(),
+            }
+            output_model = model(**input_model)[0]
+            return output_model
+
+        if type(model.base_model) in [tlm.bert.BertModel,
+                                      tlm.electra.ElectraModel,
+                                      tlm.xlnet.XLNetModel]:
             return bert_forward
+        elif type(model.base_model) in [tlm.roberta.RobertaModel]:
+            return roberta_forward
         else:  # when adding a model, also update ExplainerCaptum.available_models
             raise NotImplementedError(f'Unknown model {name_model}')
 
@@ -157,13 +178,12 @@ class ExplainerLayerIntegratedGradients(ExplainerAutoModelInitializer):
         assert 'internal_batch_size' in config, 'Define an internal batch size for the attribute method.'
 
     @staticmethod
-    def get_embedding_layer_name(model):
-        if isinstance(model, BertForSequenceClassification):
-            return 'bert.embeddings'
-        elif isinstance(model, XLNetForSequenceClassification):
-            return 'transformer.word_embedding'
+    def get_embedding_layer(model):
+        """ Used for LIG and LGXA in explainers/grad.py """
+        if type(model.base_model) == tlm.xlnet.XLNetModel:
+            return model.base_model.word_embedding
         else:
-            raise NotImplementedError
+            return model.base_model.embeddings
 
     @classmethod
     def from_config(cls, config):
@@ -171,12 +191,8 @@ class ExplainerLayerIntegratedGradients(ExplainerAutoModelInitializer):
         res.validate_config(config=config)
         res.n_samples = config['n_samples']
         res.internal_batch_size = config['internal_batch_size']
-        res.name_layer = res.get_embedding_layer_name(res.model)
-        for name, layer in res.model.named_modules():
-            if name == res.name_layer:
-                res.layer = layer
-                break
-        assert res.layer is not None, f'Layer {res.name_layer} not found.'
+        res.layer = res.get_embedding_layer(res.model)
+        assert res.layer is not None
         res.explainer = LayerIntegratedGradients(forward_func=res.forward_func, layer=res.layer)
         return res
 
@@ -184,7 +200,8 @@ class ExplainerLayerIntegratedGradients(ExplainerAutoModelInitializer):
         self.model.eval()
         self.model.zero_grad()
         batch = {k: v.to(self.device) for k, v in batch.items()}
-        inputs, additional_forward_args = self.get_inputs_and_additional_args(name_model=self.name_model, batch=batch)
+        inputs, additional_forward_args = self.get_inputs_and_additional_args(base_model=type(self.model.base_model),
+                                                                              batch=batch)
         predictions = self.forward_func(inputs, *additional_forward_args)
         target = torch.argmax(predictions, dim=1)
         base_line = self.get_baseline(batch=batch)
@@ -232,7 +249,8 @@ class ExplainerShapleyValueSampling(ExplainerAutoModelInitializer):
         self.model.eval()
         assert len(batch['input_ids']) == 1, 'This implementation assumes that the batch size is 1.'
         batch = {k: v.to(self.device) for k, v in batch.items()}
-        inputs, additional_forward_args = self.get_inputs_and_additional_args(name_model=self.name_model, batch=batch)
+        inputs, additional_forward_args = self.get_inputs_and_additional_args(base_model=type(self.model.base_model),
+                                                                              batch=batch)
         predictions = self.forward_func(inputs, *additional_forward_args)
         target = torch.argmax(predictions, dim=1)
         base_line = self.get_baseline(batch=batch)
@@ -345,3 +363,27 @@ def run_explain(config: Dict, logger):
                       'path_model': path_model}
             file_out.write(json.dumps(result) + os.linesep)
     logger.info('(Progress) Terminated normally')
+
+
+def run_compute_convergence_curve(config: Dict, logger):
+    logger.info(f'(Progress) Convergence job started.')
+    logger.info(f'(Config) Config: \n{json.dumps(config, indent=2)}')
+
+    path_explain_config = config['path_explain_config']
+    config_explain = read_config(read_path(path_explain_config))
+    n_samples_range_start = config['n_samples_range_start']
+    n_samples_range_end = config['n_samples_range_end']
+
+    for n_samples in range(n_samples_range_start, n_samples_range_end + 1):
+        logger.info(f'(Progress) Computing explanations with {n_samples} samples.')
+        # replace n_samples in explainer config and output path
+        config_explain['explainer']['config']['n_samples'] = n_samples
+        # output path
+        path_out = config_explain['path_out']
+        path_out = re.sub(r'samples-[0-9]+', f'samples-{n_samples}', path_out)
+        config_explain['path_out'] = path_out
+        # start job
+        run_explain(config=config_explain, logger=logger)
+        logger.info(f'(Progress) Done computing explanations for {n_samples} samples.')
+
+    logger.info(f'(Progress) Terminated normally.')

@@ -1,6 +1,6 @@
 local BATCH_SIZE = 1; // Do not change
 # the base dir
-local path_base_dir = "$HOME/experiments/gxai/2021-03-08-experiment-imdb/";
+local path_base_dir = "/netscratch/feldhus/experiments/emp-exp/imdb/";
 # name of the target explanations, assumed in <base-dir>/explanations/
 local name_file_target = "bert-base-cased.huggingface.imdb.test.integrated-gradients.samples-20.batch-1to-1.jsonl";
 # the approximative explanations

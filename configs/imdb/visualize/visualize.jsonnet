@@ -1,5 +1,5 @@
 # the base directory
-local path_base_dir = "$HOME/experiments/gxai/2021-03-08-experiment-imdb";
+local path_base_dir = "/netscratch/feldhus/experiments/emp-exp/imdb";
 # whether or not to normalize attribution scores on sequence level
 local normalize = true;
 # the name of the encoder

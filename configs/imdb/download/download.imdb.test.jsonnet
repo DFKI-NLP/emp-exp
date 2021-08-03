@@ -1,5 +1,5 @@
 {
     "name": "imdb",
     "split": "test",
-    "path_out": "$HOME/experiments/gxai/2021-03-08-experiment-imdb/data/test/",
+    "path_out": "/netscratch/feldhus/experiments/emp-exp/imdb/data/test/",
 }
