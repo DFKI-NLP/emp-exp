@@ -9,7 +9,7 @@ from ignite.handlers import EarlyStopping, ModelCheckpoint
 from overrides import overrides
 from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
-from transformers import AutoModel, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoModel, AutoModelForSequenceClassification, AutoTokenizer, RobertaModel
 
 from data import get_dataset
 from utils_and_base_types import read_config, read_path, get_logger, get_time, Configurable
@@ -121,7 +121,10 @@ class EmpiricalExplainer(torch.nn.Module, Configurable):
                 downstream = AutoModelForSequenceClassification.from_pretrained(path)
                 res.encoder = res.get_encoder(downstream)
         else:  # when loaded for inference, load pretrained model then overwrite with fine-tuned generative explainer
-            res.encoder = AutoModel.from_pretrained(res.name_encoder)  # AutoModel.from_pretrained(res.name_encoder)
+            if res.name_encoder == 'roberta-base':
+                res.encoder = RobertaModel.from_pretrained('roberta-base', add_pooling_layer=False)
+            else:
+                res.encoder = AutoModel.from_pretrained(res.name_encoder)  # AutoModel.from_pretrained(res.name_encoder)
         res.decoder = torch.nn.Linear(res.seq_len * res.dim_embedding, res.seq_len)
         return res
 
