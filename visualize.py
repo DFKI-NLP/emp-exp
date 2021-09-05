@@ -110,7 +110,7 @@ def run_visualize(config: Dict, logger):
                 atts = [(score / max_abs_score) for score in atts]
             sequence = Sequence(words=tokens, scores=atts)
             words_rgb = sequence.words_rgb(token_pad=tokenizer.pad_token,
-                                           position_pad=config['position_pad'])  # todo: <pad> is xlnet pad token
+                                           position_pad=config['position_pad'])  
             config_dataset = config['datasets'][index_dataloader]
             summary = {}
             if config_dataset['name_explainer'] == 'shapley-sampling':
