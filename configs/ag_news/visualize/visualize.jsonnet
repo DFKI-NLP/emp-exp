@@ -28,22 +28,6 @@ local datasets = [
     },
 },
 {
-    # if loaded from json lines, use local.explanations
-    "name": "local.explanations",
-    "name_explainer": "integrated-gradients",
-    # the number of samples used, is used internally
-    "n_samples": 6,
-    # index to label mapping
-    # World (0), Sports (1), Business (2), Sci/Tech (3).
-    "labels": {"0": "World", "1": "Sports", "2": "Business", "3": "Sci/Tech"},
-    "config": {
-        "paths_json_files": path_base_dir + '/explanations/' +
-        "roberta-base.huggingface.ag_news.test.integrated-gradients.samples-"+ $['n_samples'] + ".batch-1to-1.jsonl",
-        "batch_size": 1, # do not change
-        "columns": ["attributions", "predictions", "input_ids", "labels"],
-    },
-},
-{
     # this dictionary can be used to load empirical explanations, which require a different set of fields
     "name": "local.explanations",
     "name_explainer": "empirical", # todo: is not consistent, should be called empirical-explainer, see explain.py

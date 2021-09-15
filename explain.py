@@ -132,7 +132,7 @@ class ExplainerAutoModelInitializer(ExplainerCaptum):  # todo check if this is a
                                                                            num_labels=config['num_labels'])
         elif res.mode_load == 'ignite':
             res.model = AutoModelForSequenceClassification.from_pretrained(res.name_model, num_labels=config[
-                'num_labels'])  # todo: num_labels hard coded for xlnet
+                'num_labels'])  
             checkpoint = torch.load(res.path_model)
             to_load = {'model': res.model}
             ModelCheckpoint.load_objects(to_load=to_load,

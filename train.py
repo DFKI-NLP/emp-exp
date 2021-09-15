@@ -146,7 +146,7 @@ def get_model(name_model: str, config: Dict = None):
     """Get a model, specified by name."""
     if name_model in AVAILABLE_MODELS:
         model = AutoModelForSequenceClassification.from_pretrained(name_model, num_labels=config[
-            'num_labels'])  # todo num_labels was fixed w/o testing train.py
+            'num_labels']) 
         return model
     if name_model == 'empirical-explainer':
         return EmpiricalExplainer.from_config(config=config)
@@ -173,7 +173,7 @@ def run_train(config: Dict, logger=None):
         """Get the appropriate train step for the model, which is specified by name."""
 
         # trainer
-        def train_step_downstream_transformer(engine, batch):  # todo: rename; this forward applies to bert + xlnet
+        def train_step_downstream_transformer(engine, batch):  
             model.train()
             optimizer.zero_grad()
             batch = {k: v.to(device) for k, v in batch.items()}
@@ -289,7 +289,7 @@ def run_train(config: Dict, logger=None):
     handler_early_stopping.logger.level = logging.INFO
     evaluator.add_event_handler(Events.COMPLETED, handler_early_stopping)
 
-    handler_model_checkpoint = ModelCheckpoint(dirname=read_path(path_dir_model),  # todo hard coded
+    handler_model_checkpoint = ModelCheckpoint(dirname=read_path(path_dir_model),  
                                                score_function=lambda engine: engine.state.metrics[name_metric],
                                                score_name=name_metric,
                                                filename_prefix=f'{prefix_model}',
