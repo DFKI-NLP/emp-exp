@@ -8,8 +8,8 @@ Disclaimer: This is a refactored and prettified version of the code and has not 
 ##  :floppy_disk: Download the Explanations 
 Here are the attribution maps by the expensive target explainers and the Empirical Explainers. Each line contains an HTML document. 
 Your browser probably will not be able to load all data at once. You can extract individual lines into separate files to solve that issue. 
-* [BERT / IMDB / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/gZbHQo5Eb5kdMip/download) (823 MB)
-* [XLNet / SNLI / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/yzo7s3zCFzYz6Dt/download) (37 MB)
+* [BERT / IMDB / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/2o9cjKCp8tmJHFr/download) (823 MB)
+* [XLNet / SNLI / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/8iiMRLLcNaccLen/download) (37 MB)
 * [RoBERTa / AG News / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/RTJZ6pQ4pEXS6b9/download) (52 MB)
 * [ELECTRA / PAWS / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/yLpFDxBmJQGwjz5/download) (53 MB)
 
@@ -109,7 +109,7 @@ line by line, where each line is an HTML document that contains the explanations
 ## Download our Data, Models and Logs
 Our experiments (data, models, logs) can be downloaded, here:
 
-* [BERT/IMDB/Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/fTGCq3qiiJpjkYR) (10 GB :warning:)
-* [XLNet/SNLI/Shapley Values](https://cloud.dfki.de/owncloud/index.php/s/GMXbkof7aJi7QtM) (2.5 GB :warning:)
+* [BERT/IMDB/Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/3nJsWyq5mzCjMq3) (10 GB :warning:)
+* [XLNet/SNLI/Shapley Values](https://cloud.dfki.de/owncloud/index.php/s/F6RYC2xpT8wmb9i) (2.5 GB :warning:)
 * [RoBERTa/AG News/Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/XBygJL2mR9gfHJa) (2 GB :warning:)
 * [ELECTRA/PAWS/Shapley Values](https://cloud.dfki.de/owncloud/index.php/s/fHX5iwDb8xKZYkx) (1 GB :warning:)
