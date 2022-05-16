@@ -5,14 +5,14 @@ Below, please find (1) pointers to the heatmaps promised in the paper, (2) instr
 
 Disclaimer: This is a refactored and prettified version of the code and has not been tested exhaustively yet. This disclaimer will be removed when the tests have been conducted.
 
-##  :floppy_disk: Download the Explanations 
-Here are the attribution maps by the expensive target explainers and the Empirical Explainers. Each line contains an HTML document. 
-Your browser probably will not be able to load all data at once. You can extract individual lines into separate files to solve that issue. 
-* [BERT / IMDB / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/2o9cjKCp8tmJHFr/download) (823 MB)
-* [XLNet / SNLI / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/8iiMRLLcNaccLen/download) (37 MB)
-* [RoBERTa / AG News / Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/RTJZ6pQ4pEXS6b9/download) (52 MB)
-* [ELECTRA / PAWS / Shapley Value Samples](https://cloud.dfki.de/owncloud/index.php/s/yLpFDxBmJQGwjz5/download) (53 MB)
+##  :floppy_disk: Download the Explanations / Experiments 
+[Here](https://drive.google.com/drive/folders/1GDuiYo_yNmOH6FW2tiF3G5cmUzhrv23g) are the explanations and experiments. 
 
+### Explanations
+Explanations are contained in the folder `explanations`. Explanations are the attribution maps returned by the expensive target explainers and the Empirical Explainers. Each line contains an HTML document. Your browser probably will not be able to load all data at once. You can extract individual lines into separate files to solve that issue.
+
+### Experiments
+Our experiments (data, models, logs) can be downloaded from the folder `experiments` or replicated as described below. Please note that the archives in `experiments` range in size from 1 - 10 GB.  
 
 
 ## :bar_chart: Replicate our Experimental Results
@@ -105,11 +105,3 @@ We again provide an annotated config file
 
 After the job is done, the sub folder `|-visualizations/` contains the heatmaps. The heatmaps are written to a file, 
 line by line, where each line is an HTML document that contains the explanations. 
-
-## Download our Data, Models and Logs
-Our experiments (data, models, logs) can be downloaded, here:
-
-* [BERT/IMDB/Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/3nJsWyq5mzCjMq3) (10 GB :warning:)
-* [XLNet/SNLI/Shapley Values](https://cloud.dfki.de/owncloud/index.php/s/F6RYC2xpT8wmb9i) (2.5 GB :warning:)
-* [RoBERTa/AG News/Integrated Gradients](https://cloud.dfki.de/owncloud/index.php/s/XBygJL2mR9gfHJa) (2 GB :warning:)
-* [ELECTRA/PAWS/Shapley Values](https://cloud.dfki.de/owncloud/index.php/s/fHX5iwDb8xKZYkx) (1 GB :warning:)
